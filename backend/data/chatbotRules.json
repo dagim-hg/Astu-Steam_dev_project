@@ -1,0 +1,64 @@
+[
+    {
+        "keywords": [
+            "submit",
+            "create",
+            "new complaint",
+            "file a complaint"
+        ],
+        "response": "To submit a complaint, go to your Student Dashboard and click on 'Submit Complaint'. Fill in the title, description, category, and attach any relevant files. Once submitted, its status will be 'Open'."
+    },
+    {
+        "keywords": [
+            "status",
+            "track",
+            "check my complaint"
+        ],
+        "response": "You can track your complaints in the 'Complaint History' section of your Dashboard. The status will show as 'Open', 'In Progress', or 'Resolved'."
+    },
+    {
+        "keywords": [
+            "how long",
+            "time",
+            "when will it be fixed",
+            "duration"
+        ],
+        "response": "Resolution times vary depending on the category and complexity. The assigned department staff usually aims to begin 'In Progress' work within 24-48 hours."
+    },
+    {
+        "keywords": [
+            "attachment",
+            "file",
+            "upload",
+            "image",
+            "photo"
+        ],
+        "response": "You can upload up to 3 attachments (images or documents like PDF/Docx) when submitting a complaint to help clarify your issue."
+    },
+    {
+        "keywords": [
+            "password",
+            "forgot",
+            "can't login",
+            "reset"
+        ],
+        "response": "If you forgot your password, please contact the IT Helpdesk directly or ask the Administrator. A self-service password reset is not currently available."
+    },
+    {
+        "keywords": [
+            "category",
+            "type",
+            "what category"
+        ],
+        "response": "Available categories include Academic (e.g., grading issues), Facilities (e.g., broken equipment), IT (e.g., wifi problems), and Administrative (e.g., registration issues)."
+    },
+    {
+        "keywords": [
+            "resolved",
+            "fixed",
+            "done",
+            "close"
+        ],
+        "response": "Once a staff member completes the necessary work, they will mark your complaint as 'Resolved'. You can view staff remarks in the ticket details."
+    }
+]
