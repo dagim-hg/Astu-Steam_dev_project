@@ -6,7 +6,7 @@ import Layout from './components/layout/Layout';
 
 // Auth Pages
 import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import Home from './pages/Home';
 
 // Student Pages
 import StudentDashboard from './pages/student/Dashboard';
@@ -18,6 +18,7 @@ import StaffDashboard from './pages/staff/StaffDashboard';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
 
 // Components
 import Chatbot from './components/Chatbot';
@@ -39,16 +40,18 @@ function App() {
     return (
         <Routes>
             {/* Public Routes */}
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
             {/* Protected Routes */}
             <Route path="/" element={<ProtectedRoute user={user}><Layout user={user} onLogout={logout} /></ProtectedRoute>}>
-                {/* Default Redirect */}
+                {/* Default Dashboard Mapping */}
                 <Route index element={
-                    user?.role === 'Admin' ? <Navigate to="/admin/dashboard" replace /> :
-                        user?.role === 'Staff' ? <Navigate to="/staff/dashboard" replace /> :
-                            <Navigate to="/student/dashboard" replace />
+                    user ? (
+                        <Navigate to={user.role === 'Admin' ? '/admin/dashboard' : user.role === 'Staff' ? '/staff/dashboard' : '/student/dashboard'} replace />
+                    ) : (
+                        <Navigate to="/login" replace />
+                    )
                 } />
 
                 {/* Student Routes */}
@@ -87,10 +90,7 @@ function App() {
 
                 <Route path="admin/users" element={
                     <ProtectedRoute user={user} allowedRoles={['Admin']}>
-                        <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center">
-                            <h2 className="text-xl font-bold mb-4">User Management</h2>
-                            <p className="text-gray-500">This feature is currently under development.</p>
-                        </div>
+                        <UserManagement />
                     </ProtectedRoute>
                 } />
 
