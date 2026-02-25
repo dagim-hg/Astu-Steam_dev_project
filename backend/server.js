@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
+import dns from 'dns';
 import connectDB from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,10 +10,17 @@ import authRoutes from './routes/authRoutes.js';
 import complaintRoutes from './routes/complaintRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import seedAdmin from './utils/seedAdmin.js';
 
 dotenv.config();
 
-connectDB();
+// Fix for MongoDB Atlas DNS SRV resolution issues on some networks/Windows
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
+connectDB().then(() => {
+    seedAdmin();
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,12 +39,20 @@ app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Static folders
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/', (req, res) => {
     res.send('API is running...');
+});
+
+// 404 Handler
+app.use((req, res, next) => {
+    const error = new Error(`Not Found - ${req.originalUrl}`);
+    res.status(404);
+    next(error);
 });
 
 // Basic Error Handling

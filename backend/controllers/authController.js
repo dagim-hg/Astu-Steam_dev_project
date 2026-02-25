@@ -1,25 +1,40 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import mongoose from 'mongoose';
 
 // @desc    Auth user & get token
 // @route   POST /api/auth/login
 // @access  Public
 const authUser = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                message: 'Database Connection Error. Please check your internet or MongoDB Atlas whitelist.',
+                error: 'ECONNREFUSED or DB Down'
+            });
+        }
 
-    const user = await User.findOne({ email });
+        const { email, password } = req.body;
+        const normalizedEmail = email.toLowerCase().trim();
+        const user = await User.findOne({ email: normalizedEmail });
 
-    if (user && (await user.matchPassword(password))) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            department: user.department,
-            token: generateToken(user._id),
+        if (user && (await user.matchPassword(password))) {
+            res.json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                department: user.department,
+                token: generateToken(user._id),
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal Server Error during login',
+            error: error.message,
         });
-    } else {
-        res.status(401).json({ message: 'Invalid email or password' });
     }
 };
 
@@ -28,8 +43,8 @@ const authUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     const { name, email, password, role, department } = req.body;
-
-    const userExists = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase().trim();
+    const userExists = await User.findOne({ email: normalizedEmail });
 
     if (userExists) {
         res.status(400).json({ message: 'User already exists' });
@@ -38,7 +53,7 @@ const registerUser = async (req, res) => {
 
     const user = await User.create({
         name,
-        email,
+        email: normalizedEmail,
         password,
         role: role || 'Student',
         department: role === 'Staff' ? department : undefined,
