@@ -1,49 +1,55 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { UploadCloud, X, AlertCircle, FileText, Send } from 'lucide-react';
+import {
+    Send, Upload, AlertCircle, CheckCircle, MapPin,
+    Tag, Flag, FileText, Info, Camera, X, Loader, Sparkles, Building2
+} from 'lucide-react';
 import useAuth from '../../utils/useAuth';
+import { DEPARTMENTS } from '../../utils/constants';
 
 const SubmitComplaint = () => {
-    const [formData, setFormData] = useState({
-        title: '',
-        category: '',
-        description: '',
-    });
-    const [files, setFiles] = useState([]);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const handleInputChange = (e) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        category: '',
+        location: '',
+        priority: 'Medium',
+        assignedDepartment: ''
+    });
+    const [images, setImages] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [generatedId, setGeneratedId] = useState('');
+    const [error, setError] = useState('');
+
+    const categories = ['Academic', 'Facilities', 'IT', 'Administrative', 'Dormitory', 'Other'];
+    const priorities = ['Low', 'Medium', 'High', 'Urgent'];
+
+    const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = (e) => {
-        const selectedFiles = Array.from(e.target.files);
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImages([...images, ...files]);
 
-        if (selectedFiles.length + files.length > 3) {
-            setError('You can only upload up to 3 attachments.');
-            return;
-        }
-
-        const validFiles = selectedFiles.filter(file => {
-            const isValidType = ['image/jpeg', 'image/png', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'].includes(file.type);
-            const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
-
-            if (!isValidType) setError('Invalid file type. Only JPG, PNG, PDF, and DOC are allowed.');
-            if (!isValidSize) setError('File size must be less than 5MB.');
-
-            return isValidType && isValidSize;
-        });
-
-        setFiles([...files, ...validFiles]);
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setPreviewImages([...previewImages, ...newPreviews]);
     };
 
-    const removeFile = (index) => {
-        setFiles(files.filter((_, i) => i !== index));
+    const removeImage = (index) => {
+        const newImages = [...images];
+        newImages.splice(index, 1);
+        setImages(newImages);
+
+        const newPreviews = [...previewImages];
+        newPreviews.splice(index, 1);
+        setPreviewImages(newPreviews);
     };
 
     const handleSubmit = async (e) => {
@@ -51,178 +57,263 @@ const SubmitComplaint = () => {
         setLoading(true);
         setError('');
 
+        const data = new FormData();
+        Object.keys(formData).forEach(key => data.append(key, formData[key]));
+        images.forEach(image => data.append('images', image));
+
         try {
-            const data = new FormData();
-            data.append('title', formData.title);
-            data.append('category', formData.category);
-            data.append('description', formData.description);
-
-            files.forEach(file => {
-                data.append('attachments', file);
-            });
-
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.token}`,
-                },
+                    Authorization: `Bearer ${user.token}`
+                }
             };
-
-            await axios.post('/api/complaints', data, config);
-            navigate('/student/dashboard');
+            const response = await axios.post('/api/complaints', data, config);
+            setGeneratedId(response.data.complaintId);
+            setSuccess(true);
+            setLoading(false);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to submit complaint');
-        } finally {
             setLoading(false);
         }
     };
 
+    if (success) {
+        return (
+            <div className="max-w-2xl mx-auto py-12 px-6 animate-fade-in relative z-10 text-center">
+                <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-emerald-500/20 ring-4 ring-emerald-50">
+                    <CheckCircle size={48} />
+                </div>
+                <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Submission Successful!</h1>
+                <p className="text-lg text-gray-500 font-medium mb-12 leading-relaxed">
+                    Your complaint has been recorded. Our staff will review it and provide updates soon.
+                </p>
+
+                <div className="bg-white border-2 border-dashed border-emerald-200 rounded-[2rem] p-10 mb-12 relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+                    <p className="text-xs font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Your Tracking ID</p>
+                    <p className="text-5xl font-black text-gray-900 font-mono tracking-tighter">{generatedId}</p>
+                    <p className="mt-4 text-xs font-bold text-gray-400">Save this ID for manual tracking</p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                        onClick={() => navigate('/student/history')}
+                        className="px-10 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/30"
+                    >
+                        View My Complaints
+                    </button>
+                    <button
+                        onClick={() => setSuccess(false)}
+                        className="px-10 py-5 bg-white text-gray-700 border border-gray-200 font-black rounded-2xl hover:bg-gray-50 transition-all shadow-sm"
+                    >
+                        Submit Another
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-3xl mx-auto space-y-6 animate-fade-in relative z-10">
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Submit a Complaint</h1>
-                <p className="text-sm text-gray-500 mt-1">Please provide detailed information to help us resolve your issue quickly.</p>
+        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in relative z-10 pb-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Submit Complaint</h1>
+                    <p className="text-sm text-gray-500 mt-1 font-medium">Describe the issue in detail for faster resolution.</p>
+                </div>
+                <div className="hidden md:flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100 text-xs font-bold uppercase tracking-widest">
+                    <Info size={14} />
+                    Auto-ID Generated
+                </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
-                {/* Subtle top border gradient */}
-                <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
-
-                <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
-                    {error && (
-                        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-start">
-                            <AlertCircle className="text-red-500 mr-3 mt-0.5 flex-shrink-0" size={18} />
-                            <p className="text-sm text-red-700 font-medium">{error}</p>
-                        </div>
-                    )}
-
-                    <div className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Complaint Title <span className="text-red-500">*</span>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 shadow-xl shadow-gray-200/40 space-y-8">
+                        {/* Title Section */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1">
+                                <FileText size={16} className="text-blue-500" />
+                                Complaint Title
                             </label>
                             <input
                                 type="text"
                                 name="title"
-                                required
                                 value={formData.title}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors sm:text-sm bg-gray-50/50 hover:bg-white focus:bg-white"
-                                placeholder="e.g., Projector not working in Room 302"
+                                onChange={handleChange}
+                                required
+                                placeholder="E.g. Broken laboratory equipment in Block 3"
+                                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-semibold text-gray-800 placeholder:text-gray-300 shadow-sm"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Category <span className="text-red-500">*</span>
+                        {/* Target Department Section */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1 pt-4 border-t border-gray-50">
+                                <Building2 size={16} className="text-blue-500" />
+                                Target Department
                             </label>
                             <select
-                                name="category"
+                                name="assignedDepartment"
+                                value={formData.assignedDepartment}
+                                onChange={handleChange}
                                 required
-                                value={formData.category}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors sm:text-sm bg-gray-50/50 hover:bg-white focus:bg-white cursor-pointer"
+                                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-semibold text-gray-800 bg-white appearance-none cursor-pointer shadow-sm hover:border-gray-200"
                             >
-                                <option value="" disabled>Select a category</option>
-                                <option value="Academic">Academic Affairs</option>
-                                <option value="Facilities">Facilities & Maintenance</option>
-                                <option value="IT">IT Support</option>
-                                <option value="Administrative">Administrative/Registrar</option>
-                                <option value="Other">Other</option>
+                                <option value="" disabled>Select the department responsible</option>
+                                {DEPARTMENTS.map(dept => (
+                                    <option key={dept.value} value={dept.value}>{dept.label}</option>
+                                ))}
                             </select>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Detailed Description <span className="text-red-500">*</span>
+                        {/* Description Section */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1">
+                                <Info size={16} className="text-blue-500" />
+                                Detailed Context
                             </label>
                             <textarea
                                 name="description"
-                                required
-                                rows="5"
                                 value={formData.description}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors sm:text-sm bg-gray-50/50 hover:bg-white focus:bg-white resize-y"
-                                placeholder="Please describe the issue in detail. Include times, locations, and any relevant context..."
+                                onChange={handleChange}
+                                required
+                                rows="6"
+                                placeholder="Please provide specific details about the issue..."
+                                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-semibold text-gray-800 placeholder:text-gray-300 shadow-sm resize-none"
                             ></textarea>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Attachments (Optional - Max 3)
+                        {/* Location Section */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1">
+                                <MapPin size={16} className="text-blue-500" />
+                                Location
                             </label>
-
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:bg-gray-50/50 transition-colors overflow-hidden relative group">
-                                <div className="space-y-2 text-center relative z-10 w-full">
-                                    <UploadCloud className="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                                    <div className="flex text-sm text-gray-600 justify-center">
-                                        <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                            <span>Upload files</span>
-                                            <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple onChange={handleFileChange} />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs text-gray-500">
-                                        PNG, JPG, PDF, DOC up to 5MB
-                                    </p>
-                                </div>
-                            </div>
-
-                            {files.length > 0 && (
-                                <ul className="mt-4 space-y-2">
-                                    {files.map((file, index) => (
-                                        <li key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 shadow-sm animate-fade-in">
-                                            <div className="flex items-center flex-1 truncate">
-                                                <FileText size={18} className="text-blue-500 mr-3 flex-shrink-0" />
-                                                <span className="text-sm font-medium text-gray-700 truncate">{file.name}</span>
-                                                <span className="ml-2 text-xs text-gray-400">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => removeFile(index)}
-                                                className="ml-4 flex-shrink-0 text-gray-400 hover:text-red-500 focus:outline-none transition-colors p-1"
-                                            >
-                                                <X size={18} />
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                            <input
+                                type="text"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                required
+                                placeholder="Building No., Room No., or specific area"
+                                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-semibold text-gray-800 placeholder:text-gray-300 shadow-sm"
+                            />
                         </div>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
-                        <button
-                            type="button"
-                            onClick={() => navigate('/student/dashboard')}
-                            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm shadow-blue-500/30 transition-all`}
-                        >
-                            {loading ? (
-                                <>
-                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Submitting...
-                                </>
-                            ) : (
-                                <>
-                                    <Send size={16} className="mr-2" />
-                                    Submit Complaint
-                                </>
+                    {/* Image Upload Section */}
+                    <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/40">
+                        <h3 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2 px-1">
+                            <Camera size={20} className="text-blue-500" />
+                            Visual Evidence (Optional)
+                        </h3>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {previewImages.map((src, idx) => (
+                                <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm">
+                                    <img src={src} alt="Preview" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeImage(idx)}
+                                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                            {(previewImages.length < 4) && (
+                                <label className="aspect-square rounded-2xl border-4 border-dashed border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-blue-500 group">
+                                    <Upload size={24} className="group-hover:scale-110 transition-transform" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Add Photo</span>
+                                    <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
+                                </label>
                             )}
-                        </button>
+                        </div>
+                        <p className="mt-4 text-xs font-bold text-gray-400 italic">Accepted formats: JPG, PNG. Max 4 images.</p>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                {/* Sidebar Configuration */}
+                <div className="space-y-6">
+                    <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/40 space-y-8">
+                        {/* Category Select */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1">
+                                <Tag size={16} className="text-blue-500" />
+                                Category
+                            </label>
+                            <div className="grid grid-cols-1 gap-2">
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat}
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, category: cat })}
+                                        className={`px-4 py-3 rounded-xl text-left text-sm font-bold transition-all border-2 ${formData.category === cat
+                                            ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm'
+                                            : 'bg-white border-gray-50 text-gray-500 hover:border-gray-200'
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Priority Select */}
+                        <div className="space-y-3 pt-4 border-t border-gray-50">
+                            <label className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 px-1">
+                                <Flag size={16} className="text-blue-500" />
+                                Priority
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                                {priorities.map(p => (
+                                    <button
+                                        key={p}
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, priority: p })}
+                                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2 ${formData.priority === p
+                                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                                            : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+                                            }`}
+                                    >
+                                        {p}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pt-6">
+                            <button
+                                type="submit"
+                                disabled={loading || !formData.category || !formData.title || !formData.assignedDepartment}
+                                className="w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black rounded-2xl hover:scale-[1.02] transition-all shadow-xl shadow-blue-500/30 disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 active:scale-95 group"
+                            >
+                                {loading ? (
+                                    <Loader className="animate-spin" />
+                                ) : (
+                                    <>
+                                        Submit Complaint
+                                        <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                    </>
+                                )}
+                            </button>
+                            {error && <p className="mt-4 text-xs font-bold text-red-500 text-center animate-shake">{error}</p>}
+                        </div>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-[2rem] p-6 border border-blue-100">
+                        <h4 className="text-xs font-black text-blue-700 uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Sparkles size={14} />
+                            Smart Triage
+                        </h4>
+                        <p className="text-xs text-blue-800 font-medium leading-relaxed italic">
+                            Your complaint will be recorded in the system immediately and directly alerted to the target department you specify above.
+                        </p>
+                    </div>
+                </div>
+            </form>
         </div>
     );
 };
