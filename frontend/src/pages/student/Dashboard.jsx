@@ -40,10 +40,10 @@ const StudentDashboard = () => {
 
     const getStatusStyles = (status) => {
         switch (status) {
-            case 'Open': return 'bg-yellow-50 text-yellow-700 border-yellow-100 ring-yellow-500/10';
-            case 'In Progress': return 'bg-blue-50 text-blue-700 border-blue-100 ring-blue-500/10';
-            case 'Resolved': return 'bg-emerald-50 text-emerald-700 border-emerald-100 ring-emerald-500/10';
-            default: return 'bg-gray-50 text-gray-700 border-gray-100';
+            case 'Open': return 'bg-yellow-50 text-yellow-700 border-yellow-100 ring-yellow-500/10 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/50';
+            case 'In Progress': return 'bg-blue-50 text-blue-700 border-blue-100 ring-blue-500/10 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50';
+            case 'Resolved': return 'bg-emerald-50 text-emerald-700 border-emerald-100 ring-emerald-500/10 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/50';
+            default: return 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
         }
     };
 
@@ -90,48 +90,48 @@ const StudentDashboard = () => {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[
-                    { label: 'Submissions', value: stats.total, icon: <FileText className="text-blue-600" />, color: 'from-blue-50 to-indigo-50', border: 'border-blue-100' },
-                    { label: 'Pending', value: stats.open, icon: <AlertCircle className="text-amber-500" />, color: 'from-amber-50 to-orange-50', border: 'border-amber-100' },
-                    { label: 'Active', value: stats.inProgress, icon: <Clock className="text-indigo-600" />, color: 'from-indigo-50 to-purple-50', border: 'border-indigo-100' },
-                    { label: 'Resolved', value: stats.resolved, icon: <CheckCircle className="text-emerald-500" />, color: 'from-emerald-50 to-teal-50', border: 'border-emerald-100' },
+                    { label: 'Submissions', value: stats.total, icon: <FileText className="text-blue-600 dark:text-blue-400" />, color: 'from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20', border: 'border-blue-100 dark:border-blue-800/50' },
+                    { label: 'Pending', value: stats.open, icon: <AlertCircle className="text-amber-500 dark:text-amber-400" />, color: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20', border: 'border-amber-100 dark:border-amber-800/50' },
+                    { label: 'Active', value: stats.inProgress, icon: <Clock className="text-indigo-600 dark:text-indigo-400" />, color: 'from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20', border: 'border-indigo-100 dark:border-indigo-800/50' },
+                    { label: 'Resolved', value: stats.resolved, icon: <CheckCircle className="text-emerald-500 dark:text-emerald-400" />, color: 'from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20', border: 'border-emerald-100 dark:border-emerald-800/50' },
                 ].map((stat, i) => (
                     <div key={i} className={`p-6 sm:p-8 rounded-[2rem] border ${stat.border} bg-gradient-to-br ${stat.color} shadow-sm transition-all hover:shadow-md group`}>
                         <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform">{stat.icon}</div>
-                            <TrendingUp size={16} className="text-gray-300" />
+                            <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm group-hover:scale-110 transition-transform">{stat.icon}</div>
+                            <TrendingUp size={16} className="text-gray-300 dark:text-slate-600" />
                         </div>
-                        <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">{stat.label}</p>
-                        <p className="text-4xl font-black text-gray-900 mt-1">{stat.value}</p>
+                        <p className="text-sm font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                        <p className="text-4xl font-black text-gray-900 dark:text-white mt-1">{stat.value}</p>
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Complaints Table-like structure */}
-                <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
-                    <div className="px-8 py-7 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+                <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 shadow-xl shadow-gray-200/40 dark:shadow-none overflow-hidden">
+                    <div className="px-8 py-7 border-b border-gray-50 dark:border-slate-800 flex justify-between items-center bg-gray-50/30 dark:bg-slate-800/30">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
                                 <History size={20} />
                             </div>
-                            <h2 className="text-xl font-black text-gray-900 tracking-tight">Recent Tracking</h2>
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">Recent Tracking</h2>
                         </div>
-                        <Link to="/student/history" className="text-sm font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 group">
+                        <Link to="/student/history" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 group">
                             View History
                             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
 
-                    <div className="divide-y divide-gray-50">
+                    <div className="divide-y divide-gray-50 dark:divide-slate-800/50">
                         {loading ? (
                             <div className="p-12 text-center text-gray-400 font-medium italic animate-pulse">Synchronizing with system...</div>
                         ) : complaints.length === 0 ? (
                             <div className="p-16 text-center flex flex-col items-center">
-                                <div className="w-20 h-20 bg-gray-50 rounded-[2rem] flex items-center justify-center mb-6 border border-gray-100">
-                                    <FileText size={32} className="text-gray-300" />
+                                <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-6 border border-gray-100 dark:border-slate-700">
+                                    <FileText size={32} className="text-gray-300 dark:text-slate-600" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">No active records</h3>
-                                <p className="text-gray-500 text-sm mb-8 max-w-xs font-medium">Your submission history is empty. Start by reporting a campus issue.</p>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No active records</h3>
+                                <p className="text-gray-500 dark:text-slate-400 text-sm mb-8 max-w-xs font-medium">Your submission history is empty. Start by reporting a campus issue.</p>
                                 <Link to="/student/submit" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
                                     Report First Issue
                                 </Link>
@@ -141,21 +141,21 @@ const StudentDashboard = () => {
                                 <Link
                                     key={complaint._id}
                                     to={`/student/complaint/${complaint._id}`}
-                                    className="block p-7 hover:bg-blue-50/30 transition-all group"
+                                    className="block p-7 hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-all group"
                                 >
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="space-y-2">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black font-mono text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 uppercase tracking-tighter shadow-sm">
+                                                <span className="text-[10px] font-black font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-800 uppercase tracking-tighter shadow-sm">
                                                     {complaint.complaintId}
                                                 </span>
-                                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight truncate max-w-[200px] sm:max-w-sm">
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight truncate max-w-[200px] sm:max-w-sm">
                                                     {complaint.title}
                                                 </h3>
                                             </div>
-                                            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-gray-400">
-                                                <span className="flex items-center gap-1.5 text-gray-600 italic">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-gray-400 dark:text-slate-500">
+                                                <span className="flex items-center gap-1.5 text-gray-600 dark:text-slate-400 italic">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500"></span>
                                                     {complaint.category}
                                                 </span>
                                                 <span>•</span>
@@ -167,7 +167,7 @@ const StudentDashboard = () => {
                                             <span className={`inline-flex items-center px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ring-1 ${getStatusStyles(complaint.status)}`}>
                                                 {complaint.status}
                                             </span>
-                                            <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-300 group-hover:text-blue-500 group-hover:border-blue-200 transition-all shadow-sm">
+                                            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 flex items-center justify-center text-gray-300 dark:text-slate-600 group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:border-blue-200 dark:group-hover:border-blue-800 transition-all shadow-sm">
                                                 <ArrowRight size={18} />
                                             </div>
                                         </div>
@@ -196,8 +196,8 @@ const StudentDashboard = () => {
                     </div>
 
                     {/* Stats Summary Card */}
-                    <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-xl shadow-gray-200/30">
-                        <h3 className="text-xl font-black text-gray-900 mb-6">System Health</h3>
+                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-gray-100 dark:border-slate-800 p-8 shadow-xl shadow-gray-200/30 dark:shadow-none">
+                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-6">System Health</h3>
                         <div className="space-y-6">
                             {[
                                 { label: 'Issue Resolution Rate', value: '94%', color: 'bg-emerald-500' },
@@ -205,11 +205,11 @@ const StudentDashboard = () => {
                                 { label: 'System Uptime', value: '99.9%', color: 'bg-indigo-500' },
                             ].map((item, i) => (
                                 <div key={i} className="space-y-2">
-                                    <div className="flex justify-between text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    <div className="flex justify-between text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest">
                                         <span>{item.label}</span>
-                                        <span className="text-gray-900">{item.value}</span>
+                                        <span className="text-gray-900 dark:text-slate-200">{item.value}</span>
                                     </div>
-                                    <div className="h-2 bg-gray-50 rounded-full overflow-hidden border border-gray-100 p-0.5">
+                                    <div className="h-2 bg-gray-50 dark:bg-slate-800 rounded-full overflow-hidden border border-gray-100 dark:border-slate-800 p-0.5">
                                         <div className={`h-full ${item.color} rounded-full transition-all duration-1000`} style={{ width: item.value }}></div>
                                     </div>
                                 </div>

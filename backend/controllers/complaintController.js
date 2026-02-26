@@ -39,12 +39,15 @@ const createComplaint = async (req, res) => {
     // notify Admins + dept Staff about new complaint
     const notifyStaff = async () => {
         try {
+            console.log(`[DEBUG] Notifying staff for complaint: ${title}, Dept: ${assignedDepartment}`);
             const recipients = await User.find({
                 $or: [
                     { role: 'Admin' },
                     { role: 'Staff', department: { $regex: new RegExp(`^${assignedDepartment || 'General'}$`, 'i') } }
                 ]
-            }).select('_id');
+            }).select('_id name role department');
+
+            console.log(`[DEBUG] Found ${recipients.length} recipients for notification`);
 
             const notifications = recipients.map(r => ({
                 userId: r._id,
@@ -52,13 +55,15 @@ const createComplaint = async (req, res) => {
                 message: `${req.user.name} submitted: "${title}"`,
                 type: 'info',
                 link: `/staff/update?ticket=${createdComplaint.complaintId}`,
-                relatedId: createdComplaint.complaintId // Link to tracking ID
+                relatedId: createdComplaint.complaintId // Link to tracking ID (CMP-xxxx)
             }));
+            
             if (notifications.length > 0) {
-                await Notification.insertMany(notifications);
+                const result = await Notification.insertMany(notifications);
+                console.log(`[DEBUG] Inserted ${result.length} notifications into DB`);
             }
         } catch (err) {
-            console.error('Notification Error:', err);
+            console.error('[DEBUG] Notification Creation Error:', err);
         }
     };
     notifyStaff(); // Run in parallel
@@ -100,11 +105,16 @@ const getComplaintById = async (req, res) => {
         // Mark notifications related to this complaint as read for this user
         (async () => {
             try {
-                await Notification.updateMany(
-                    { userId: req.user._id, relatedId: complaint._id.toString(), isRead: false },
+                const result = await Notification.updateMany(
+                    { userId: req.user._id, relatedId: complaint.complaintId, isRead: false },
                     { isRead: true }
                 );
-            } catch (_) {}
+                if (result.modifiedCount > 0) {
+                    console.log(`[DEBUG] Automatically cleared ${result.modifiedCount} notifications for user ${req.user.name} on ticket ${complaint.complaintId}`);
+                }
+            } catch (err) {
+                console.error('[DEBUG] Notification Auto-Read Error (Object ID):', err);
+            }
         })();
 
         res.json(complaint);
@@ -169,11 +179,16 @@ const getComplaintByTrackingId = async (req, res) => {
         // Mark notifications related to this complaint as read for this user
         (async () => {
             try {
-                await Notification.updateMany(
+                const result = await Notification.updateMany(
                     { userId: req.user._id, relatedId: complaint.complaintId, isRead: false },
                     { isRead: true }
                 );
-            } catch (_) {}
+                if (result.modifiedCount > 0) {
+                    console.log(`[DEBUG] Automatically cleared ${result.modifiedCount} notifications for user ${req.user.name} on ticket ${complaint.complaintId}`);
+                }
+            } catch (err) {
+                console.error('[DEBUG] Notification Auto-Read Error (Tracking ID):', err);
+            }
         })();
 
         res.json(complaint);
@@ -220,16 +235,18 @@ const updateComplaintStatus = async (req, res) => {
         // Notify the student who submitted this complaint
         const notifyStudent = async () => {
             try {
-                await Notification.create({
+                console.log(`[DEBUG] Notifying student for status update on ticket: ${updatedComplaint.complaintId}`);
+                const notif = await Notification.create({
                     userId: updatedComplaint.studentId,
                     title: `Ticket ${updatedComplaint.complaintId} Updated`,
                     message: `Your complaint "${updatedComplaint.title}" status changed to: ${updatedComplaint.status}`,
                     type: updatedComplaint.status === 'Resolved' ? 'success' : 'info',
                     link: `/student/complaint/${updatedComplaint._id}`,
-                    relatedId: updatedComplaint._id.toString()
+                    relatedId: updatedComplaint.complaintId // Use human-readable Tracking ID
                 });
+                console.log(`[DEBUG] Student notification created: ${notif._id}`);
             } catch (err) {
-                console.error('Notification Error:', err);
+                console.error('[DEBUG] Student Notification Error:', err);
             }
         };
         notifyStudent();

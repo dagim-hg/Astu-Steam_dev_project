@@ -16,10 +16,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
+    const login = async (identifier, password, role) => {
         try {
             const config = { headers: { 'Content-Type': 'application/json' } };
-            const { data } = await axios.post('/api/auth/login', { email, password }, config);
+            const { data } = await axios.post('/api/auth/login', { identifier, password, role }, config);
 
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));

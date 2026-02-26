@@ -74,8 +74,8 @@ const StaffDashboard = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Department Overview</h1>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Department Overview</h1>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                         Welcome back, {user?.name}. Here is the current status of the {user?.department || 'Department'} queue.
                     </p>
                 </div>
@@ -83,52 +83,52 @@ const StaffDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Total Assigned */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm relative overflow-hidden group">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-gray-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Total Assigned</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</h3>
+                            <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Total Assigned</p>
+                            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</h3>
                         </div>
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl group-hover:scale-110 transition-transform">
                             <ClipboardList size={24} />
                         </div>
                     </div>
                     <div className="flex items-center text-sm">
-                        <span className="text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <span className="text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md flex items-center gap-1">
                             Tickets in Queue
                         </span>
                     </div>
                 </div>
 
                 {/* In Progress */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm relative overflow-hidden group">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-gray-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">In Progress</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.inProgress}</h3>
+                            <p className="text-sm font-medium text-gray-500 dark:text-slate-400">In Progress</p>
+                            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{stats.inProgress}</h3>
                         </div>
-                        <div className="p-3 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl group-hover:scale-110 transition-transform">
                             <Clock size={24} />
                         </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                        <span className="text-amber-600 font-medium">Currently being worked on</span>
+                    <div className="flex items-center text-sm text-gray-500 dark:text-slate-400">
+                        <span className="text-amber-600 dark:text-amber-400 font-medium">Currently being worked on</span>
                     </div>
                 </div>
 
                 {/* Resolved */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm relative overflow-hidden group">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-gray-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Resolved</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.resolved}</h3>
+                            <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Resolved</p>
+                            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{stats.resolved}</h3>
                         </div>
-                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl group-hover:scale-110 transition-transform">
                             <CheckCircle2 size={24} />
                         </div>
                     </div>
                     <div className="flex items-center text-sm">
-                        <span className="text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md flex items-center gap-1">
                             <TrendingUp size={14} /> {resolutionRate}% clear rate
                         </span>
                     </div>
@@ -136,21 +136,21 @@ const StaffDashboard = () => {
             </div>
 
             {/* Recent Complaints Section */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
-                <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
+                <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
+                    <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
                         <Clock className="text-indigo-500" size={18} />
                         Recently Assigned
                     </h3>
-                    <Link to="/staff/assigned" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                    <Link to="/staff/assigned" className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center gap-1">
                         View All
                         <ChevronRight size={14} />
                     </Link>
                 </div>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-100 dark:divide-slate-800">
                     {recentComplaints.length > 0 ? (
                         recentComplaints.map(complaint => (
-                            <div key={complaint._id} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between group">
+                            <div key={complaint._id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors flex items-center justify-between group">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-2 h-2 rounded-full ${
                                         complaint.priority === 'Urgent' ? 'bg-red-500' :
@@ -158,18 +158,18 @@ const StaffDashboard = () => {
                                         'bg-blue-400'
                                     }`}></div>
                                     <div>
-                                        <p className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                        <p className="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                             {complaint.title}
                                         </p>
                                         <div className="flex items-center gap-3 mt-1">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{complaint.complaintId}</span>
-                                            <span className="text-[10px] py-0.5 px-2 rounded-full bg-slate-100 text-slate-600 font-bold uppercase">{complaint.status}</span>
+                                            <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-tight">{complaint.complaintId}</span>
+                                            <span className="text-[10px] py-0.5 px-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold uppercase">{complaint.status}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <Link 
                                     to={`/staff/update?ticket=${complaint.complaintId}`}
-                                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                    className="p-2 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
                                 >
                                     <ChevronRight size={20} />
                                 </Link>

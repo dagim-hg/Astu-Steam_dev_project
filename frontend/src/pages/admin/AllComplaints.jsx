@@ -67,11 +67,11 @@ const AllComplaints = () => {
 
     const getStatusStyle = (status) => {
         switch (status) {
-            case 'Open': return 'bg-yellow-50 text-yellow-700 border border-yellow-200';
-            case 'In Progress': return 'bg-blue-50 text-blue-700 border border-blue-200';
-            case 'Resolved': return 'bg-green-50 text-green-700 border border-green-200';
-            case 'Rejected': return 'bg-red-50 text-red-700 border border-red-200';
-            default: return 'bg-gray-50 text-gray-700 border border-gray-200';
+            case 'Open': return 'bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/50';
+            case 'In Progress': return 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50';
+            case 'Resolved': return 'bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/50';
+            case 'Rejected': return 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/50';
+            default: return 'bg-gray-50 text-gray-700 border border-gray-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
         }
     };
 
@@ -97,20 +97,20 @@ const AllComplaints = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">System Complaints</h1>
-                    <p className="text-sm text-gray-500 mt-1">Master view of all issues reported across the university.</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">System Complaints</h1>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Master view of all issues reported across the university.</p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-medium">
+                <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-4 py-2 rounded-lg font-medium">
                     <FileText size={18} />
                     <span>{complaints.length} Total Records</span>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                 <div className="relative md:col-span-6">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-slate-500">
                         <Search size={18} />
                     </div>
                     <input
@@ -118,18 +118,18 @@ const AllComplaints = () => {
                         placeholder="Search tracking ID, title, or user..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all"
                     />
                 </div>
 
                 <div className="relative w-full md:col-span-3">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-slate-500">
                         <Filter size={18} />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition-all appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all appearance-none cursor-pointer"
                     >
                         <option value="All">All Statuses</option>
                         <option value="Open">Open</option>
@@ -140,13 +140,13 @@ const AllComplaints = () => {
                 </div>
 
                 <div className="relative w-full md:col-span-3">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-slate-500">
                         <Filter size={18} />
                     </div>
                     <select
                         value={departmentFilter}
                         onChange={(e) => setDepartmentFilter(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition-all appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all appearance-none cursor-pointer"
                     >
                         {departments.map(dept => (
                             <option key={dept} value={dept}>{dept === 'All' ? 'All Departments' : dept}</option>
@@ -156,11 +156,11 @@ const AllComplaints = () => {
             </div>
 
             {/* Complaints List */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600">
+                            <tr className="bg-gray-50 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300">
                                 <th className="p-4 pl-6">Tracking ID & Title</th>
                                 <th className="p-4">Submitter</th>
                                 <th className="p-4">Department / Staff</th>
@@ -168,29 +168,29 @@ const AllComplaints = () => {
                                 <th className="p-4 text-right pr-6">Action</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                             {filteredComplaints.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="p-8 text-center text-gray-500">
+                                    <td colSpan="5" className="p-8 text-center text-gray-500 dark:text-slate-400">
                                         No complaints match your current filters.
                                     </td>
                                 </tr>
                             ) : (
                                 filteredComplaints.map((comp) => (
-                                    <tr key={comp._id} className="hover:bg-gray-50/50 transition-colors group">
+                                    <tr key={comp._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors group">
                                         <td className="p-4 pl-6">
-                                            <div className="font-semibold text-gray-900 line-clamp-1">{comp.title}</div>
-                                            <div className="text-xs text-gray-500 font-mono mt-1 pr-2 bg-gray-100 rounded inline-block px-1">
+                                            <div className="font-semibold text-gray-900 dark:text-slate-100 line-clamp-1">{comp.title}</div>
+                                            <div className="text-xs text-gray-500 dark:text-slate-400 font-mono mt-1 pr-2 bg-gray-100 dark:bg-slate-800 rounded inline-block px-1">
                                                 {comp.trackingId}
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <div className="text-sm font-medium text-gray-800">{comp.student?.name || 'Unknown User'}</div>
-                                            <div className="text-xs text-gray-500">{new Date(comp.createdAt).toLocaleDateString()}</div>
+                                            <div className="text-sm font-medium text-gray-800 dark:text-slate-200">{comp.student?.name || 'Unknown User'}</div>
+                                            <div className="text-xs text-gray-500 dark:text-slate-500">{new Date(comp.createdAt).toLocaleDateString()}</div>
                                         </td>
                                         <td className="p-4">
-                                            <div className="text-sm font-medium text-indigo-700">{comp.assignedDepartment || 'Unassigned'}</div>
-                                            <div className="text-xs text-gray-500">
+                                            <div className="text-sm font-medium text-indigo-700 dark:text-indigo-400">{comp.assignedDepartment || 'Unassigned'}</div>
+                                            <div className="text-xs text-gray-500 dark:text-slate-500">
                                                 {comp.assignedStaff ? `Staff: ${comp.assignedStaff.name}` : 'Awaiting Assignment'}
                                             </div>
                                         </td>
@@ -202,10 +202,8 @@ const AllComplaints = () => {
                                         </td>
                                         <td className="p-4 pr-6 text-right">
                                             <Link 
-                                                // Link directly to the student detail view for simplicity in this demo, 
-                                                // normally admin might have their own detail view URL
                                                 to={`/student/complaint/${comp._id}`} 
-                                                className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-indigo-200"
+                                                className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800"
                                             >
                                                 Manage <ArrowRight size={14} />
                                             </Link>

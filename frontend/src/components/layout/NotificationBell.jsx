@@ -13,16 +13,17 @@ const NotificationBell = () => {
     const fetchNotifications = async () => {
         try {
             const { data } = await axios.get('/api/notifications');
-            setNotifications(data.notifications);
-            setUnreadCount(data.unreadCount);
+            setNotifications(data.notifications || []);
+            setUnreadCount(data.unreadCount || 0);
         } catch (error) {
-            console.error('Error fetching notifications:', error);
+            console.error('[DEBUG] Notification Fetch Error:', error);
+            // We don't want to spam the console or UI too much if it's a temporary connection drop
         }
     };
 
     useEffect(() => {
         fetchNotifications();
-        const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+        const interval = setInterval(fetchNotifications, 15000); // Poll every 15s for responsiveness
         return () => clearInterval(interval);
     }, []);
 
@@ -87,23 +88,23 @@ const NotificationBell = () => {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-200 focus:outline-none"
+                className="relative p-2 text-gray-400 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-all duration-200 focus:outline-none"
             >
                 <Bell size={22} />
                 {unreadCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 shadow-sm animate-pulse-subtle">
                         {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                 )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                        <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-right-2 duration-200">
+                    <div className="p-4 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                        <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             Notifications
                             {unreadCount > 0 && (
-                                <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full">
+                                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] px-2 py-0.5 rounded-full">
                                     {unreadCount} New
                                 </span>
                             )}
@@ -111,7 +112,7 @@ const NotificationBell = () => {
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllAsRead}
-                                className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold flex items-center gap-1"
                             >
                                 <Check size={14} />
                                 Mark all as read
@@ -121,35 +122,35 @@ const NotificationBell = () => {
 
                     <div className="max-h-[400px] overflow-y-auto cursor-default">
                         {notifications.length > 0 ? (
-                            <div className="divide-y divide-gray-50">
+                            <div className="divide-y divide-gray-50 dark:divide-slate-800">
                                 {notifications.map((notif) => (
                                     <div
                                         key={notif._id}
-                                        className={`p-4 transition-colors hover:bg-gray-50 flex gap-3 ${!notif.isRead ? 'bg-blue-50/30' : ''}`}
+                                        className={`p-4 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800 flex gap-3 ${!notif.isRead ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
                                     >
-                                        <div className={`mt-1 h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 border ${getTypeStyles(notif.type)}`}>
+                                        <div className={`mt-1 h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 border ${getTypeStyles(notif.type)} dark:border-slate-700`}>
                                             {getTypeIcon(notif.type)}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between items-start gap-2">
-                                                <p className={`text-sm font-bold truncate ${notif.isRead ? 'text-gray-700' : 'text-gray-900'}`}>
+                                                <p className={`text-sm font-bold truncate ${notif.isRead ? 'text-gray-700 dark:text-slate-400' : 'text-gray-900 dark:text-white'}`}>
                                                     {notif.title}
                                                 </p>
                                                 {!notif.isRead && (
                                                     <button
                                                         onClick={() => handleMarkAsRead(notif._id)}
-                                                        className="text-gray-400 hover:text-blue-600"
+                                                        className="text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400"
                                                         title="Mark as read"
                                                     >
                                                         <Check size={14} />
                                                     </button>
                                                 )}
                                             </div>
-                                            <p className="text-sm text-gray-600 mt-1 line-clamp-2 leading-relaxed">
+                                            <p className="text-sm text-gray-600 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
                                                 {notif.message}
                                             </p>
                                             <div className="mt-2 flex items-center justify-between">
-                                                <span className="text-[10px] text-gray-400 flex items-center gap-1 font-medium">
+                                                <span className="text-[10px] text-gray-400 dark:text-slate-500 flex items-center gap-1 font-medium">
                                                     <Clock size={10} />
                                                     {formatTime(notif.createdAt)}
                                                 </span>
@@ -157,7 +158,7 @@ const NotificationBell = () => {
                                                     <Link
                                                         to={notif.link}
                                                         onClick={() => { setIsOpen(false); handleMarkAsRead(notif._id); }}
-                                                        className="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-0.5"
+                                                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-bold flex items-center gap-0.5"
                                                     >
                                                         Details
                                                         <ChevronRight size={12} />
@@ -179,8 +180,8 @@ const NotificationBell = () => {
                         )}
                     </div>
 
-                    <div className="p-3 border-t border-gray-100 bg-gray-50 text-center">
-                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+                    <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50 text-center">
+                        <p className="text-[10px] text-gray-400 dark:text-slate-500 font-medium uppercase tracking-wider">
                             ASTU Complaints System
                         </p>
                     </div>
