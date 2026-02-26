@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
-import { generateUserId } from '../utils/idGenerator.js';
+import { generateSystemId } from '../utils/idGenerator.js';
 
 // @desc    Admin create a new user
 // @route   POST /api/admin/create-user
@@ -15,17 +15,18 @@ const createUser = async (req, res) => {
         return;
     }
 
-    const systemId = await generateUserId();
+    const assignedRole = role || 'Student';
+    const systemId = await generateSystemId(assignedRole);
 
     const user = await User.create({
         name,
         email,
         password,
-        role: role || 'Student',
+        role: assignedRole,
         systemId,
-        department: (role === 'Staff' || role === 'Student') ? department : undefined,
-        studentIdNum: role === 'Student' ? studentIdNum : undefined,
-        dormBlock: role === 'Student' ? dormBlock : undefined,
+        department: (assignedRole === 'Staff' || assignedRole === 'Student') ? department : undefined,
+        studentIdNum: assignedRole === 'Student' ? studentIdNum : undefined,
+        dormBlock: assignedRole === 'Student' ? dormBlock : undefined,
     });
 
     if (user) {
@@ -34,6 +35,7 @@ const createUser = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            systemId: user.systemId,
             department: user.department,
         });
     } else {

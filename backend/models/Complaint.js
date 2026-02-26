@@ -10,6 +10,20 @@ const complaintSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        complaintId: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        location: {
+            type: String,
+            required: true,
+        },
+        priority: {
+            type: String,
+            enum: ['Low', 'Medium', 'High', 'Urgent'],
+            default: 'Medium',
+        },
         category: {
             type: String,
             enum: ['Academic', 'Facilities', 'IT', 'Administrative', 'Other'],
@@ -42,7 +56,11 @@ const complaintSchema = new mongoose.Schema(
                 comment: { type: String },
                 date: { type: Date, default: Date.now }
             }
-        ]
+        ],
+        resolutionImage: {
+            url: { type: String },
+            filename: { type: String },
+        }
     },
     {
         timestamps: true,

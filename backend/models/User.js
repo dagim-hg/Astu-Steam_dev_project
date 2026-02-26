@@ -7,10 +7,17 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        systemId: {
+            type: String,
+            unique: true,
+            required: true,
+        },
         email: {
             type: String,
             required: true,
             unique: true,
+            lowercase: true,
+            trim: true,
         },
         password: {
             type: String,
@@ -22,11 +29,20 @@ const userSchema = new mongoose.Schema(
             default: 'Student',
         },
         department: {
-            type: String, // E.g., 'IT', 'Facilities', 'Registrar'. Relevant mostly for Staff.
-            required: function () {
-                return this.role === 'Staff';
-            }
-        }
+            type: String, // Department for Staff or Student
+        },
+        studentIdNum: {
+            type: String, // Specific for Students (e.g., ATR/1234/12)
+        },
+        dormBlock: {
+            type: String, // Specific for Students
+        },
+        resetPasswordOTP: {
+            type: String,
+        },
+        resetPasswordOTPExpiry: {
+            type: Date,
+        },
     },
     {
         timestamps: true,
@@ -41,7 +57,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 // Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        next();
+        return next();
     }
 
     const salt = await bcrypt.genSalt(10);
