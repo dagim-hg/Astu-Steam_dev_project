@@ -156,7 +156,7 @@ const UserManagement = () => {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -183,25 +183,28 @@ const UserManagement = () => {
                                             <div className="text-sm text-gray-500">{usr.email}</div>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${usr.role === 'Admin' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                                    usr.role === 'Staff' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                        'bg-green-50 text-green-700 border-green-200'
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                                                usr.role === 'Admin' ? 'bg-purple-50 text-purple-700 border-purple-200 shadow-sm' :
+                                                usr.role === 'Staff' ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' :
+                                                                         'bg-green-50 text-green-700 border-green-200 shadow-sm'
                                                 }`}>
                                                 {usr.role}
                                             </span>
                                         </td>
                                         <td className="p-4 hidden sm:table-cell">
                                             {usr.department ? (
-                                                <div className="text-sm text-gray-700">{usr.department}</div>
+                                                <div className="text-sm font-medium text-gray-700">{usr.department}</div>
                                             ) : usr.studentIdNum ? (
-                                                <div className="text-sm text-gray-700">Student ID: {usr.studentIdNum}</div>
+                                                <div className="text-sm font-medium text-gray-700">ID: {usr.studentIdNum}</div>
                                             ) : (
-                                                <div className="text-sm text-gray-400 italic">N/A</div>
+                                                <div className="text-sm text-gray-400 italic">No Dept Assigned</div>
                                             )}
-                                            {usr.dormBlock && <div className="text-xs text-gray-500">Dorm: {usr.dormBlock}</div>}
+                                            {usr.dormBlock && <div className="text-xs text-gray-500 mt-0.5">Dorm: {usr.dormBlock}</div>}
                                         </td>
-                                        <td className="p-4 hidden md:table-cell text-sm text-gray-500 font-mono">
-                                            {usr.systemId || 'N/A'}
+                                        <td className="p-4 hidden md:table-cell">
+                                            <span className="text-xs font-mono font-medium bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md border border-gray-200">
+                                                {usr.systemId || 'Pending'}
+                                            </span>
                                         </td>
                                         <td className="p-4 text-right">
                                             <button
@@ -209,9 +212,9 @@ const UserManagement = () => {
                                                 disabled={deleteLoading === usr._id || usr.email === 'admin@astu.edu.et' || usr._id === currentUser._id}
                                                 className={`p-2 rounded-lg transition-colors ${(usr.email === 'admin@astu.edu.et' || usr._id === currentUser._id) ?
                                                         'text-gray-300 cursor-not-allowed hidden' :
-                                                        'text-red-500 hover:bg-red-50 hover:text-red-700'
+                                                        'text-red-500 hover:bg-red-50 hover:text-red-700 active:bg-red-100'
                                                     }`}
-                                                title="Delete User"
+                                                title={usr.email === 'admin@astu.edu.et' ? "Super Admin cannot be deleted" : "Delete User"}
                                             >
                                                 {deleteLoading === usr._id ? (
                                                     <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>

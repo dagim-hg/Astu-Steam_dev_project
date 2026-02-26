@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, FileText, CheckCircle2, Clock, AlertCircle, TrendingUp, PieChart } from 'lucide-react';
+import { Users, FileText, CheckCircle2, Clock, AlertCircle, TrendingUp, PieChart, UserPlus } from 'lucide-react';
 import useAuth from '../../utils/useAuth';
 
 const AdminDashboard = () => {
@@ -9,18 +9,6 @@ const AdminDashboard = () => {
     const [error, setError] = useState('');
 
     const { user } = useAuth();
-
-    // User creation state
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('Student');
-    const [department, setDepartment] = useState('');
-    const [studentIdNum, setStudentIdNum] = useState('');
-    const [dormBlock, setDormBlock] = useState('');
-    const [formLoading, setFormLoading] = useState(false);
-    const [formError, setFormError] = useState('');
-    const [formSuccess, setFormSuccess] = useState('');
 
     useEffect(() => {
         const fetchAnalytics = async () => {
@@ -66,35 +54,6 @@ const AdminDashboard = () => {
             </div>
         );
     }
-
-    const handleCreateUser = async (e) => {
-        e.preventDefault();
-        setFormLoading(true);
-        setFormError('');
-        setFormSuccess('');
-
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${user.token}` }
-            };
-            await axios.post('/api/admin/create-user', {
-                name, email, password, role, department, studentIdNum, dormBlock
-            }, config);
-
-            setFormSuccess(`Successfully created ${role} account for ${name}`);
-            setName('');
-            setEmail('');
-            setPassword('');
-            setRole('Student');
-            setDepartment('');
-            setStudentIdNum('');
-            setDormBlock('');
-        } catch (err) {
-            setFormError(err.response?.data?.message || 'Failed to create user');
-        } finally {
-            setFormLoading(false);
-        }
-    };
 
     const { metrics, complaintsByCategory } = data;
 
@@ -175,138 +134,20 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* User Management Section */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-8">
-                <div className="flex items-center gap-2 mb-6">
-                    <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
-                        <Users size={20} />
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mt-8 mb-8 text-center bg-gradient-to-br from-indigo-50 to-white">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                        <Users size={28} />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800">Admin-Controlled Account Creation</h3>
+                    <h3 className="text-xl font-bold text-gray-800">User Management</h3>
+                    <p className="text-gray-500 max-w-lg mx-auto mb-4">
+                        The account creation form has been moved to a dedicated page for better organization.
+                    </p>
+                    <a href="/admin/users/register" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors shadow-md">
+                        <UserPlus size={18} />
+                        Go to Register User
+                    </a>
                 </div>
-
-                <form onSubmit={handleCreateUser} className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                            <input
-                                type="text"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="Enter full name"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="example@astu.edu.et"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Initial Password</label>
-                            <input
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Account Role</label>
-                            <select
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all"
-                            >
-                                <option value="Student">Student</option>
-                                <option value="Staff">Staff</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                        </div>
-
-                        {(role === 'Staff' || role === 'Student') && (
-                            <div className="animate-fade-in group">
-                                <label className="block text-sm font-medium text-gray-700 mb-1 group-focus-within:text-blue-600 transition-colors">Department</label>
-                                <select
-                                    required
-                                    value={department}
-                                    onChange={(e) => setDepartment(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all hover:border-gray-400"
-                                >
-                                    <option value="" disabled>Select Department</option>
-                                    <option value="IT">IT Support</option>
-                                    <option value="Facilities">Facilities</option>
-                                    <option value="Academic">Academic Affairs</option>
-                                    <option value="Registrar">Registrar</option>
-                                    <option value="Dormitory">Dormitory Management</option>
-                                </select>
-                            </div>
-                        )}
-
-                        {role === 'Student' && (
-                            <div className="grid grid-cols-2 gap-4 animate-fade-in">
-                                <div className="group">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1 group-focus-within:text-blue-600 transition-colors">Student ID</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={studentIdNum}
-                                        onChange={(e) => setStudentIdNum(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all hover:border-gray-400"
-                                        placeholder="ATR/0000/00"
-                                    />
-                                </div>
-                                <div className="group">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1 group-focus-within:text-blue-600 transition-colors">Dorm Block</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={dormBlock}
-                                        onChange={(e) => setDormBlock(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all hover:border-gray-400"
-                                        placeholder="Block 50x"
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                disabled={formLoading}
-                                className={`w-full py-2.5 px-4 rounded-lg text-white font-medium transition-all shadow-md active:scale-95 ${formLoading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-200'
-                                    }`}
-                            >
-                                {formLoading ? 'Creating User...' : 'Register New Account'}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                {formError && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2 animate-fade-in">
-                        <AlertCircle size={16} />
-                        {formError}
-                    </div>
-                )}
-
-                {formSuccess && (
-                    <div className="mt-4 p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg flex items-center gap-2 animate-fade-in">
-                        <CheckCircle2 size={16} />
-                        {formSuccess}
-                    </div>
-                )}
             </div>
 
             {/* Main Charts Area */}
