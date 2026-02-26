@@ -6,6 +6,8 @@ import {
     getComplaints,
     getComplaintById,
     updateComplaintStatus,
+    getAssignedComplaints,
+    getComplaintByTrackingId
 } from '../controllers/complaintController.js';
 import { protect, staff } from '../middlewares/authMiddleware.js';
 
@@ -47,8 +49,12 @@ router.route('/')
     .post(protect, upload.array('attachments', 3), createComplaint)
     .get(protect, getComplaints);
 
+// Staff specific routes
+router.get('/staff/assigned', protect, staff, getAssignedComplaints);
+router.get('/tracking/:id', protect, staff, getComplaintByTrackingId);
+
 router.route('/:id')
     .get(protect, getComplaintById)
-    .put(protect, staff, updateComplaintStatus);
+    .put(protect, staff, upload.single('resolutionImage'), updateComplaintStatus);
 
 export default router;
