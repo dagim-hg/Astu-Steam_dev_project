@@ -54,15 +54,9 @@ const Navbar = ({ toggleSidebar, user, onLogout }) => {
                     <div className="flex gap-2">
                         <Link
                             to="/login"
-                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            to="/register"
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg shadow-sm shadow-blue-600/20"
                         >
-                            Register
+                            Login
                         </Link>
                     </div>
                 )}

@@ -1,35 +1,46 @@
 import { NavLink } from 'react-router-dom';
 import {
-    BarChart3,
-    FileText,
-    PlusCircle,
-    Users,
-    Settings,
-    X,
-    MessageSquare
+    LayoutDashboard, FileText, History, Users, Settings, X,
+    TrendingUp, UserPlus, Building2, Layers, PieChart, ClipboardList, CheckCircle, Bot, MessageSquare
 } from 'lucide-react';
 
 const Sidebar = ({ user, isOpen, toggleSidebar }) => {
     if (!user) return null;
 
+    const studentLinks = [
+        { name: 'Dashboard', path: '/student/dashboard', icon: <LayoutDashboard size={20} /> },
+        { name: 'Submit Complaint', path: '/student/submit', icon: <FileText size={20} /> },
+        { name: 'My Complaints', path: '/student/history', icon: <History size={20} /> },
+        { name: 'AI Assistant', path: '/student/ai', icon: <Bot size={20} /> },
+        { name: 'Profile', path: '/student/profile', icon: <Settings size={20} /> },
+    ];
+
+    const staffLinks = [
+        { name: 'Dashboard', path: '/staff/dashboard', icon: <LayoutDashboard size={20} /> },
+        { name: 'Assigned Complaints', path: '/staff/assigned', icon: <ClipboardList size={20} /> },
+        { name: 'Update Complaint', path: '/staff/update', icon: <CheckCircle size={20} /> },
+        { name: 'Profile', path: '/staff/profile', icon: <Settings size={20} /> },
+    ];
+
+    const adminLinks = [
+        { name: 'Dashboard Overview', path: '/admin/dashboard', icon: <TrendingUp size={20} /> },
+        { name: 'Register User', path: '/admin/users/register', icon: <UserPlus size={20} /> },
+        { name: 'Manage Users', path: '/admin/users', icon: <Users size={20} /> },
+        { name: 'Manage Departments', path: '/admin/departments', icon: <Building2 size={20} /> },
+        { name: 'Manage Categories', path: '/admin/categories', icon: <Layers size={20} /> },
+        { name: 'View All Complaints', path: '/admin/complaints', icon: <FileText size={20} /> },
+        { name: 'Analytics', path: '/admin/analytics', icon: <PieChart size={20} /> },
+        { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
+    ];
+
     const getNavLinks = () => {
         switch (user.role) {
             case 'Student':
-                return [
-                    { name: 'Dashboard', path: '/student/dashboard', icon: <BarChart3 size={20} /> },
-                    { name: 'Submit Complaint', path: '/student/submit', icon: <PlusCircle size={20} /> },
-                    { name: 'My History', path: '/student/history', icon: <FileText size={20} /> },
-                ];
+                return studentLinks;
             case 'Staff':
-                return [
-                    { name: 'Staff Dashboard', path: '/staff/dashboard', icon: <BarChart3 size={20} /> },
-                ];
+                return staffLinks;
             case 'Admin':
-                return [
-                    { name: 'Analytics Dashboard', path: '/admin/dashboard', icon: <BarChart3 size={20} /> },
-                    { name: 'Manage Users', path: '/admin/users', icon: <Users size={20} /> },
-                    { name: 'System Settings', path: '/admin/settings', icon: <Settings size={20} /> },
-                ];
+                return adminLinks;
             default:
                 return [];
         }
@@ -62,7 +73,7 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
                 <div className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
                     {navLinks.map((link) => (
                         <NavLink
-                            key={link.path}
+                            key={link.path + link.name}
                             to={link.path}
                             onClick={() => {
                                 if (window.innerWidth < 1024) toggleSidebar();

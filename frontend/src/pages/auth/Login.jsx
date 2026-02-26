@@ -50,7 +50,7 @@ const Login = () => {
                         <span className="text-white text-3xl font-extrabold tracking-tighter">A</span>
                     </div>
                     <h2 className="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
-                        Welcome Back
+                        System Access
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Sign in to access the Complaint & Issue Tracking System
@@ -123,14 +123,9 @@ const Login = () => {
                     </div>
                 </form>
 
-                <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-600">
-                        Don't have an account?{' '}
-                        <Link to="/register" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
-                            Register here
-                        </Link>
-                    </p>
-                </div>
+                <p className="mt-8 text-center text-xs text-gray-500 bg-gray-50 py-3 rounded-lg border border-gray-100">
+                    Registration is restricted to Administator roles only. Contact the system admin if you need an account.
+                </p>
             </div>
         </div>
     );
