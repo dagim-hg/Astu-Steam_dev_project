@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout';
 
 // Auth Pages
 import Login from './pages/auth/Login';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import Home from './pages/Home';
 
 // Student Pages
@@ -54,6 +55,7 @@ function App() {
             {/* Public Routes - Landing & Auth */}
             <Route path="/" element={!user ? <Home /> : <Navigate to="/dashboard" replace />} />
             <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" replace />} />
 
             {/* Protected System Routes */}
             <Route element={<ProtectedRoute user={user}><Layout user={user} onLogout={logout} /></ProtectedRoute>}>

@@ -60,12 +60,12 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
 
             {/* Sidebar */}
             <aside
-                className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col shadow-xl lg:shadow-none
+                className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out flex flex-col shadow-xl lg:shadow-none
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
-                <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 bg-gray-50/50">
-                    <span className="font-bold text-gray-800 tracking-wide text-sm uppercase text-blue-600">Menu</span>
-                    <button onClick={toggleSidebar} className="lg:hidden text-gray-500 hover:text-gray-800 transition-colors p-1 rounded hover:bg-gray-200">
+                <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                    <span className="font-bold text-gray-800 dark:text-slate-200 tracking-wide text-sm uppercase text-blue-600 dark:text-blue-400">Menu</span>
+                    <button onClick={toggleSidebar} className="lg:hidden text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-100 transition-colors p-1 rounded hover:bg-gray-200 dark:hover:bg-slate-700">
                         <X size={20} />
                     </button>
                 </div>
@@ -80,19 +80,19 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
                             }}
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${isActive
-                                    ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold shadow-sm'
+                                    : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-slate-100'
                                 }`
                             }
                         >
                             {({ isActive }) => (
                                 <>
-                                    <div className={`${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-500'} transition-colors z-10`}>
+                                    <div className={`${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-slate-500 group-hover:text-blue-500'} transition-colors z-10`}>
                                         {link.icon}
                                     </div>
                                     <span className="z-10">{link.name}</span>
                                     {isActive && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-600 rounded-r-md"></div>
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-600 dark:bg-blue-400 rounded-r-md"></div>
                                     )}
                                 </>
                             )}
@@ -101,11 +101,11 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
                 </div>
 
                 {/* Decorative element at bottom */}
-                <div className="p-4 mx-4 mb-4 mt-auto rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 -mt-2 -mr-2 text-blue-200 opacity-50">
+                <div className="p-4 mx-4 mb-4 mt-auto rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border border-blue-100 dark:border-slate-800 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 -mt-2 -mr-2 text-blue-200 dark:text-blue-900/30 opacity-50">
                         <MessageSquare size={64} />
                     </div>
-                    <p className="text-xs text-blue-800 font-medium relative z-10 leading-relaxed">
+                    <p className="text-xs text-blue-800 dark:text-blue-300 font-medium relative z-10 leading-relaxed">
                         Need help? Check out the AI Chatbot on your dashboard.
                     </p>
                 </div>
