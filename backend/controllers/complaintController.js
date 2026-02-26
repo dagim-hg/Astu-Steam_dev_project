@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Complaint from '../models/Complaint.js';
 import { generateComplaintId } from '../utils/idGenerator.js';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
 
 // @desc    Create a new complaint
 // @route   POST /api/complaints
@@ -32,6 +34,35 @@ const createComplaint = async (req, res) => {
     });
 
     const createdComplaint = await complaint.save();
+
+    // --- NOTIFICATIONS ---
+    // notify Admins + dept Staff about new complaint
+    const notifyStaff = async () => {
+        try {
+            const recipients = await User.find({
+                $or: [
+                    { role: 'Admin' },
+                    { role: 'Staff', department: { $regex: new RegExp(`^${assignedDepartment || 'General'}$`, 'i') } }
+                ]
+            }).select('_id');
+
+            const notifications = recipients.map(r => ({
+                userId: r._id,
+                title: 'New Complaint Submitted',
+                message: `${req.user.name} submitted: "${title}"`,
+                type: 'info',
+                link: `/staff/update?ticket=${createdComplaint.complaintId}`,
+                relatedId: createdComplaint.complaintId // Link to tracking ID
+            }));
+            if (notifications.length > 0) {
+                await Notification.insertMany(notifications);
+            }
+        } catch (err) {
+            console.error('Notification Error:', err);
+        }
+    };
+    notifyStaff(); // Run in parallel
+
     res.status(201).json(createdComplaint);
 };
 
@@ -64,6 +95,18 @@ const getComplaintById = async (req, res) => {
         if (req.user.role === 'Student' && complaint.studentId._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: 'Not authorized to view this complaint' });
         }
+
+        // --- CLEAR NOTIFICATIONS ---
+        // Mark notifications related to this complaint as read for this user
+        (async () => {
+            try {
+                await Notification.updateMany(
+                    { userId: req.user._id, relatedId: complaint._id.toString(), isRead: false },
+                    { isRead: true }
+                );
+            } catch (_) {}
+        })();
+
         res.json(complaint);
     } else {
         res.status(404).json({ message: 'Complaint not found' });
@@ -122,6 +165,17 @@ const getComplaintByTrackingId = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized to view complaints outside your department' });
         }
 
+        // --- CLEAR NOTIFICATIONS ---
+        // Mark notifications related to this complaint as read for this user
+        (async () => {
+            try {
+                await Notification.updateMany(
+                    { userId: req.user._id, relatedId: complaint.complaintId, isRead: false },
+                    { isRead: true }
+                );
+            } catch (_) {}
+        })();
+
         res.json(complaint);
     } catch (error) {
         res.status(500).json({ message: 'Error searching for complaint', error: error.message });
@@ -161,6 +215,25 @@ const updateComplaintStatus = async (req, res) => {
         }
 
         const updatedComplaint = await complaint.save();
+
+        // --- NOTIFICATIONS ---
+        // Notify the student who submitted this complaint
+        const notifyStudent = async () => {
+            try {
+                await Notification.create({
+                    userId: updatedComplaint.studentId,
+                    title: `Ticket ${updatedComplaint.complaintId} Updated`,
+                    message: `Your complaint "${updatedComplaint.title}" status changed to: ${updatedComplaint.status}`,
+                    type: updatedComplaint.status === 'Resolved' ? 'success' : 'info',
+                    link: `/student/complaint/${updatedComplaint._id}`,
+                    relatedId: updatedComplaint._id.toString()
+                });
+            } catch (err) {
+                console.error('Notification Error:', err);
+            }
+        };
+        notifyStudent();
+
         res.json(updatedComplaint);
     } else {
         res.status(404).json({ message: 'Complaint not found' });

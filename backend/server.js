@@ -11,6 +11,7 @@ import complaintRoutes from './routes/complaintRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import seedAdmin from './utils/seedAdmin.js';
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Static folders
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
