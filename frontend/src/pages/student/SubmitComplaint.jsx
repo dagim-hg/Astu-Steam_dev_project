@@ -59,7 +59,7 @@ const SubmitComplaint = () => {
 
         const data = new FormData();
         Object.keys(formData).forEach(key => data.append(key, formData[key]));
-        images.forEach(image => data.append('images', image));
+        images.forEach(image => data.append('attachments', image));
 
         try {
             const config = {

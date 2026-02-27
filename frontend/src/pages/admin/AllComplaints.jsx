@@ -202,7 +202,7 @@ const AllComplaints = () => {
                                         </td>
                                         <td className="p-4 pr-6 text-right">
                                             <Link 
-                                                to={`/student/complaint/${comp._id}`} 
+                                                to={`/staff/update?ticket=${comp.complaintId}`} 
                                                 className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800"
                                             >
                                                 Manage <ArrowRight size={14} />

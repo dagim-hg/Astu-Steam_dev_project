@@ -170,6 +170,26 @@ const ComplaintDetails = () => {
                                     </div>
                                 </div>
                             )}
+
+                            {complaint.status === 'Resolved' && complaint.resolutionImage && (
+                                <div className="mt-6 bg-green-50 rounded-2xl p-6 border-2 border-green-200 border-dashed animate-pulse-subtle">
+                                    <h4 className="text-xs font-black text-green-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <CheckCircle size={16} /> Official Resolution Proof
+                                    </h4>
+                                    <a 
+                                        href={complaint.resolutionImage.url} 
+                                        target="_blank" 
+                                        rel="noreferrer"
+                                        className="block aspect-video rounded-xl overflow-hidden border border-green-200 shadow-lg hover:scale-[1.02] transition-transform"
+                                    >
+                                        <img 
+                                            src={complaint.resolutionImage.url} 
+                                            alt="Resolution Proof" 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

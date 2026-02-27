@@ -8,67 +8,72 @@ import User from '../models/User.js';
 // @route   POST /api/complaints
 // @access  Private (Student)
 const createComplaint = async (req, res) => {
-    const { title, description, category, location, priority, assignedDepartment } = req.body;
+    try {
+        const { title, description, category, location, priority, assignedDepartment } = req.body;
 
-    if (req.user.role !== 'Student') {
-        return res.status(403).json({ message: 'Only students can submit complaints' });
-    }
-
-    const attachments = req.files ? req.files.map(file => ({
-        url: `/uploads/${file.filename}`,
-        filename: file.originalname
-    })) : [];
-
-    const complaintId = await generateComplaintId();
-
-    const complaint = new Complaint({
-        title,
-        description,
-        category,
-        complaintId,
-        location,
-        priority: priority || 'Medium',
-        assignedDepartment: assignedDepartment || 'General',
-        studentId: req.user._id,
-        attachments
-    });
-
-    const createdComplaint = await complaint.save();
-
-    // --- NOTIFICATIONS ---
-    // notify Admins + dept Staff about new complaint
-    const notifyStaff = async () => {
-        try {
-            console.log(`[DEBUG] Notifying staff for complaint: ${title}, Dept: ${assignedDepartment}`);
-            const recipients = await User.find({
-                $or: [
-                    { role: 'Admin' },
-                    { role: 'Staff', department: { $regex: new RegExp(`^${assignedDepartment || 'General'}$`, 'i') } }
-                ]
-            }).select('_id name role department');
-
-            console.log(`[DEBUG] Found ${recipients.length} recipients for notification`);
-
-            const notifications = recipients.map(r => ({
-                userId: r._id,
-                title: 'New Complaint Submitted',
-                message: `${req.user.name} submitted: "${title}"`,
-                type: 'info',
-                link: `/staff/update?ticket=${createdComplaint.complaintId}`,
-                relatedId: createdComplaint.complaintId // Link to tracking ID (CMP-xxxx)
-            }));
-            
-            if (notifications.length > 0) {
-                const result = await Notification.insertMany(notifications);
-                console.log(`[DEBUG] Inserted ${result.length} notifications into DB`);
-            }
-        } catch (err) {
-            console.error('[DEBUG] Notification Creation Error:', err);
+        if (req.user.role !== 'Student') {
+            return res.status(403).json({ message: 'Only students can submit complaints' });
         }
-    };
-    notifyStaff(); // Run in parallel
 
-    res.status(201).json(createdComplaint);
+        const attachments = req.files ? req.files.map(file => ({
+            url: `/uploads/${file.filename}`,
+            filename: file.originalname
+        })) : [];
+
+        const complaintId = await generateComplaintId();
+
+        const complaint = new Complaint({
+            title,
+            description,
+            category,
+            complaintId,
+            location,
+            priority: priority || 'Medium',
+            assignedDepartment: assignedDepartment || 'General',
+            studentId: req.user._id,
+            attachments
+        });
+
+        const createdComplaint = await complaint.save();
+
+        // --- NOTIFICATIONS ---
+        // notify Admins + dept Staff about new complaint
+        const notifyStaff = async () => {
+            try {
+                console.log(`[DEBUG] Notifying staff for complaint: ${title}, Dept: ${assignedDepartment}`);
+                const recipients = await User.find({
+                    $or: [
+                        { role: 'Admin' },
+                        { role: 'Staff', department: { $regex: new RegExp(`^${assignedDepartment || 'General'}$`, 'i') } }
+                    ]
+                }).select('_id name role department');
+
+                console.log(`[DEBUG] Found ${recipients.length} recipients for notification`);
+
+                const notifications = recipients.map(r => ({
+                    userId: r._id,
+                    title: 'New Complaint Submitted',
+                    message: `${req.user.name} submitted: "${title}"`,
+                    type: 'info',
+                    link: `/staff/update?ticket=${createdComplaint.complaintId}`,
+                    relatedId: createdComplaint.complaintId // Link to tracking ID (CMP-xxxx)
+                }));
+                
+                if (notifications.length > 0) {
+                    const result = await Notification.insertMany(notifications);
+                    console.log(`[DEBUG] Inserted ${result.length} notifications into DB`);
+                }
+            } catch (err) {
+                console.error('[DEBUG] Notification Creation Error:', err);
+            }
+        };
+        notifyStaff(); // Run in parallel
+
+        res.status(201).json(createdComplaint);
+    } catch (error) {
+        console.error('Error creating complaint:', error);
+        res.status(500).json({ message: 'Error creating complaint', error: error.message });
+    }
 };
 
 // @desc    Get all complaints (filtered by role)

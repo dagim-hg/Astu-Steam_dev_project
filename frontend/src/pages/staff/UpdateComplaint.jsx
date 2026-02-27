@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Search, AlertCircle, Save, Image as ImageIcon, ArrowLeft, CheckCircle2, Clock, X } from 'lucide-react';
+import { Search, AlertCircle, Save, Image as ImageIcon, ArrowLeft, CheckCircle2, Clock, X, ExternalLink } from 'lucide-react';
 import useAuth from '../../utils/useAuth';
 
 const UpdateComplaint = () => {
@@ -203,6 +203,39 @@ const UpdateComplaint = () => {
                                 </p>
                             </div>
 
+                            {/* Student Attachments Section */}
+                            {complaint.attachments && complaint.attachments.length > 0 && (
+                                <div className="pt-4 border-t border-gray-100">
+                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                        <ImageIcon size={14} /> Student Evidence
+                                    </h3>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {complaint.attachments.map((file, idx) => (
+                                            <a 
+                                                key={idx} 
+                                                href={file.url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="group relative aspect-video rounded-xl overflow-hidden border border-gray-200 hover:border-indigo-400 transition-all shadow-sm"
+                                            >
+                                                <img 
+                                                    src={file.url} 
+                                                    alt={`Attachment ${idx + 1}`} 
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.src = 'https://placehold.co/400x300?text=Document';
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                                    <ExternalLink className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={20} />
+                                                </div>
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Category</h3>
@@ -278,11 +311,33 @@ const UpdateComplaint = () => {
 
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-1.5">Attach Proof (Optional)</label>
-                                        <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 bg-white hover:bg-slate-50 transition-colors cursor-pointer text-center">
-                                            <ImageIcon className="mx-auto text-slate-400 mb-2" size={24} />
-                                            <span className="text-sm text-slate-500 font-medium">Click to upload resolution image</span>
-                                            <input type="file" className="hidden" />
-                                        </div>
+                                        <label className={`border-2 border-dashed rounded-xl p-4 bg-white hover:bg-slate-50 transition-colors cursor-pointer text-center block ${selectedFile ? 'border-indigo-400 bg-indigo-50/30' : 'border-slate-300'}`}>
+                                            <input 
+                                                type="file" 
+                                                name="resolutionImage"
+                                                onChange={handleFileChange}
+                                                className="hidden" 
+                                                accept="image/*"
+                                            />
+                                            {selectedFile ? (
+                                                <div className="flex items-center justify-center gap-2 text-indigo-700 font-bold text-sm">
+                                                    <CheckCircle2 size={18} />
+                                                    {selectedFile.name}
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={(e) => { e.preventDefault(); setSelectedFile(null); }}
+                                                        className="ml-2 p-1 hover:bg-indigo-100 rounded-full"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <ImageIcon className="mx-auto text-slate-400 mb-2" size={24} />
+                                                    <span className="text-sm text-slate-500 font-medium tracking-tight">Click to upload resolution proof</span>
+                                                </>
+                                            )}
+                                        </label>
                                     </div>
 
                                     <button
