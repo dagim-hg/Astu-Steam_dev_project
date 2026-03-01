@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
+import { logAction } from '../middlewares/auditLog.js';
 
 // @desc    Auth user & get token
 // @route   POST /api/auth/login
@@ -36,6 +37,12 @@ const authUser = async (req, res) => {
         }
 
         if (user && (await user.matchPassword(password))) {
+            await logAction({
+                user: user._id,
+                action: 'LOGIN_SUCCESS',
+                message: `User ${user.email || user.systemId} logged in successfully`,
+                req
+            });
             res.json({
                 _id: user._id,
                 name: user.name,
@@ -46,6 +53,12 @@ const authUser = async (req, res) => {
                 token: generateToken(user._id),
             });
         } else {
+            await logAction({
+                action: 'LOGIN_FAILURE',
+                message: `Failed login attempt for ${identifier}`,
+                req,
+                metadata: { identifier, role }
+            });
             res.status(401).json({ message: 'Invalid credentials' });
         }
     } catch (error) {
@@ -160,6 +173,12 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+        await logAction({
+            user: user._id,
+            action: 'REGISTER_USER',
+            message: `New user registered: ${user.email} as ${user.role}`,
+            req
+        });
         res.status(201).json({
             _id: user._id,
             name: user.name,

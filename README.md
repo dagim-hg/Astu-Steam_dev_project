@@ -7,6 +7,10 @@ A full-stack, enterprise-grade solution for managing university complaints and i
 - **Role-Based Access Control (RBAC):** Distinct dashboards and permissions for Students, Staff, and Administrators.
 - **Complaint Management:** Seamless submission, tracking, and resolution of student complaints.
 - **AI Chatbot:** Integrated intelligent assistant for instant answers to common queries.
+- **Security & Auditing:**
+    - **Rate Limiting:** Protection against brute-force and DDoS attacks using `express-rate-limit`.
+    - **IP Tracking:** All critical actions are logged with the origin IP address for security monitoring.
+    - **Audit Logs:** Comprehensive tracking of user actions (login, complaints, admin tasks) stored in MongoDB.
 - **Secure File Uploads:** Support for evidence/attachment uploads using Multer.
 - **Real-time Notifications:** Bell-style notifications for status updates (e.g., complaint resolution, new staff assignments).
 - **Responsive UI:** Modern, mobile-friendly interface built with React and Tailwind CSS.

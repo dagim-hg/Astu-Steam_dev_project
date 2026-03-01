@@ -12,6 +12,7 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import { apiLimiter } from './middlewares/rateLimit.js';
 import seedAdmin from './utils/seedAdmin.js';
 
 dotenv.config();
@@ -34,6 +35,9 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(cors());
 app.use(express.json());
+
+// Apply rate limiting to all API routes
+app.use('/api', apiLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);

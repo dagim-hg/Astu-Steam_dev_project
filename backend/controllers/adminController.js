@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { generateSystemId } from '../utils/idGenerator.js';
+import { logAction } from '../middlewares/auditLog.js';
 
 // @desc    Admin create a new user
 // @route   POST /api/admin/create-user
@@ -37,6 +38,14 @@ const createUser = async (req, res) => {
             role: user.role,
             systemId: user.systemId,
             department: user.department,
+        });
+
+        await logAction({
+            user: req.user._id,
+            action: 'REGISTER_USER',
+            message: `Admin ${req.user.name} created user: ${user.email} (${user.role})`,
+            resourceId: user._id.toString(),
+            req
         });
     } else {
         res.status(400).json({ message: 'Invalid user data' });
@@ -78,6 +87,14 @@ const deleteUser = async (req, res) => {
 
         await User.deleteOne({ _id: user._id });
         res.json({ message: 'User removed successfully' });
+
+        await logAction({
+            user: req.user._id,
+            action: 'DELETE_USER',
+            message: `Admin ${req.user.name} deleted user: ${user.email} (${user.role})`,
+            resourceId: user._id.toString(),
+            req
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting user', error: error.message });
     }

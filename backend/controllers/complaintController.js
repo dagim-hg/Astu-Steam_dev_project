@@ -3,6 +3,7 @@ import Complaint from '../models/Complaint.js';
 import { generateComplaintId } from '../utils/idGenerator.js';
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
+import { logAction } from '../middlewares/auditLog.js';
 
 // @desc    Create a new complaint
 // @route   POST /api/complaints
@@ -58,7 +59,7 @@ const createComplaint = async (req, res) => {
                     link: `/staff/update?ticket=${createdComplaint.complaintId}`,
                     relatedId: createdComplaint.complaintId // Link to tracking ID (CMP-xxxx)
                 }));
-                
+
                 if (notifications.length > 0) {
                     const result = await Notification.insertMany(notifications);
                     console.log(`[DEBUG] Inserted ${result.length} notifications into DB`);
@@ -70,6 +71,14 @@ const createComplaint = async (req, res) => {
         notifyStaff(); // Run in parallel
 
         res.status(201).json(createdComplaint);
+
+        await logAction({
+            user: req.user._id,
+            action: 'SUBMIT_COMPLAINT',
+            message: `User ${req.user.name} submitted complaint: ${createdComplaint.complaintId}`,
+            resourceId: createdComplaint.complaintId,
+            req
+        });
     } catch (error) {
         console.error('Error creating complaint:', error);
         res.status(500).json({ message: 'Error creating complaint', error: error.message });
@@ -212,7 +221,7 @@ const updateComplaintStatus = async (req, res) => {
 
     if (complaint) {
         // Authorization check for Staff
-        if (req.user.role === 'Staff' && 
+        if (req.user.role === 'Staff' &&
             complaint.assignedDepartment.toLowerCase() !== req.user.department.toLowerCase()) {
             return res.status(403).json({ message: 'Not authorized to update complaints outside your department' });
         }
@@ -257,6 +266,15 @@ const updateComplaintStatus = async (req, res) => {
         notifyStudent();
 
         res.json(updatedComplaint);
+
+        await logAction({
+            user: req.user._id,
+            action: 'UPDATE_COMPLAINT_STATUS',
+            message: `Staff ${req.user.name} updated ticket ${updatedComplaint.complaintId} to ${updatedComplaint.status}`,
+            resourceId: updatedComplaint.complaintId,
+            req,
+            metadata: { status, remark: !!remark }
+        });
     } else {
         res.status(404).json({ message: 'Complaint not found' });
     }
