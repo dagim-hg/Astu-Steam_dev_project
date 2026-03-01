@@ -14,7 +14,6 @@ import StudentDashboard from './pages/student/Dashboard';
 import SubmitComplaint from './pages/student/SubmitComplaint';
 import ComplaintHistory from './pages/student/ComplaintHistory';
 import ComplaintDetails from './pages/student/ComplaintDetails';
-import AIAssistant from './pages/student/AIAssistant';
 import Profile from './pages/student/Profile';
 
 // Staff Pages
@@ -90,11 +89,6 @@ function App() {
                 <Route path="student/complaint/:id" element={
                     <ProtectedRoute user={user} allowedRoles={['Student']}>
                         <ComplaintDetails />
-                    </ProtectedRoute>
-                } />
-                <Route path="student/ai" element={
-                    <ProtectedRoute user={user} allowedRoles={['Student']}>
-                        <AIAssistant />
                     </ProtectedRoute>
                 } />
                 <Route path="student/profile" element={

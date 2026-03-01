@@ -76,13 +76,6 @@ const StudentDashboard = () => {
                             <PlusCircle size={20} className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
                             New Complaint
                         </Link>
-                        <Link
-                            to="/student/ai"
-                            className="inline-flex items-center justify-center px-8 py-4 bg-blue-400/20 border border-white/20 text-white font-extrabold rounded-2xl hover:bg-white/30 transition-all backdrop-blur-md group"
-                        >
-                            <Zap size={20} className="mr-2 text-yellow-300 group-animate-pulse" />
-                            Ask Assistant
-                        </Link>
                     </div>
                 </div>
             </div>
@@ -180,19 +173,14 @@ const StudentDashboard = () => {
 
                 {/* Sidebar Cards */}
                 <div className="space-y-8">
-                    {/* Help Card */}
                     <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-900/10 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 -mt-8 -mr-8 text-white/5 opacity-40 group-hover:rotate-12 transition-transform duration-500">
                             <MessageSquare size={160} />
                         </div>
-                        <h3 className="text-2xl font-black mb-4 relative z-10">Need Help?</h3>
+                        <h3 className="text-2xl font-black mb-4 relative z-10">ASTU Smart System</h3>
                         <p className="text-indigo-100 font-medium text-sm leading-relaxed mb-8 relative z-10">
-                            Our AI Assistant is available 24/7 to guide you through ASTU campus procedures and system usage.
+                            Use the chat widget at the bottom right for quick guidance on system usage and campus procedures.
                         </p>
-                        <Link to="/student/ai" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-700 font-bold rounded-xl hover:bg-indigo-50 transition-all shadow-lg shadow-black/10 relative z-10">
-                            Start Chat
-                            <ArrowRight size={16} />
-                        </Link>
                     </div>
 
                     {/* Stats Summary Card */}

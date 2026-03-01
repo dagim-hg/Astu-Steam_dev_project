@@ -45,7 +45,7 @@ const Navbar = ({ toggleSidebar, user, onLogout }) => {
                 {user ? (
                     <div className="flex items-center gap-4">
                         <NotificationBell />
-                        
+
                         <div className="hidden md:flex flex-col text-right">
                             <span className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</span>
                             <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-medium px-2 py-0.5 rounded-full inline-block mt-0.5">
