@@ -11,7 +11,6 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
         { name: 'Dashboard', path: '/student/dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Submit Complaint', path: '/student/submit', icon: <FileText size={20} /> },
         { name: 'My Complaints', path: '/student/history', icon: <History size={20} /> },
-        { name: 'AI Assistant', path: '/student/ai', icon: <Bot size={20} /> },
         { name: 'Profile', path: '/student/profile', icon: <Settings size={20} /> },
     ];
 
@@ -106,7 +105,7 @@ const Sidebar = ({ user, isOpen, toggleSidebar }) => {
                         <MessageSquare size={64} />
                     </div>
                     <p className="text-xs text-blue-800 dark:text-blue-300 font-medium relative z-10 leading-relaxed">
-                        Need help? Check out the AI Chatbot on your dashboard.
+                        Need help? Click the chat button in the bottom right corner.
                     </p>
                 </div>
             </aside>

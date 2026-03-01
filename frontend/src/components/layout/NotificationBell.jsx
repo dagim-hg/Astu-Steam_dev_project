@@ -2,30 +2,39 @@ import { useState, useEffect, useRef } from 'react';
 import { Bell, Check, X, ExternalLink, Clock, AlertCircle, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import useAuth from '../../utils/useAuth';
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useAuth();
     const dropdownRef = useRef(null);
 
     const fetchNotifications = async () => {
+        if (!user?.token) return;
         try {
-            const { data } = await axios.get('/api/notifications');
+            const config = {
+                headers: { Authorization: `Bearer ${user.token}` }
+            };
+            const { data } = await axios.get('/api/notifications', config);
             setNotifications(data.notifications || []);
             setUnreadCount(data.unreadCount || 0);
         } catch (error) {
-            console.error('[DEBUG] Notification Fetch Error:', error);
-            // We don't want to spam the console or UI too much if it's a temporary connection drop
+            if (error.response?.status !== 401) {
+                console.error('[DEBUG] Notification Fetch Error:', error);
+            }
         }
     };
 
     useEffect(() => {
-        fetchNotifications();
-        const interval = setInterval(fetchNotifications, 15000); // Poll every 15s for responsiveness
-        return () => clearInterval(interval);
-    }, []);
+        if (user) {
+            fetchNotifications();
+            const interval = setInterval(fetchNotifications, 15000);
+            return () => clearInterval(interval);
+        }
+    }, [user]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -38,8 +47,12 @@ const NotificationBell = () => {
     }, []);
 
     const handleMarkAsRead = async (id) => {
+        if (!user?.token) return;
         try {
-            await axios.put(`/api/notifications/${id}/read`);
+            const config = {
+                headers: { Authorization: `Bearer ${user.token}` }
+            };
+            await axios.put(`/api/notifications/${id}/read`, {}, config);
             setNotifications(notifications.map(n => n._id === id ? { ...n, isRead: true } : n));
             setUnreadCount(prev => Math.max(0, prev - 1));
         } catch (error) {
@@ -48,8 +61,12 @@ const NotificationBell = () => {
     };
 
     const handleMarkAllAsRead = async () => {
+        if (!user?.token) return;
         try {
-            await axios.put('/api/notifications/read-all');
+            const config = {
+                headers: { Authorization: `Bearer ${user.token}` }
+            };
+            await axios.put('/api/notifications/read-all', {}, config);
             setNotifications(notifications.map(n => ({ ...n, isRead: true })));
             setUnreadCount(0);
         } catch (error) {
@@ -77,7 +94,7 @@ const NotificationBell = () => {
         const date = new Date(dateString);
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
-        
+
         if (diffInSeconds < 60) return 'just now';
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
